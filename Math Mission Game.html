@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Mission: Save the Galaxy!</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #0d0d2b;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #1e1e3f;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    .instructions, .categories, .question-box, .result {
+      margin: 30px auto;
+      max-width: 600px;
+    }
+    .button {
+      background: #3e8ed0;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      margin: 10px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .button:hover {
+      background: #2c6fa1;
+      transform: scale(1.05);
+    }
+    .question-box {
+      display: none;
+    }
+    .score {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+    .correct {
+      color: #00ff00;
+    }
+    .incorrect {
+      color: #ff3333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Math Mission: Save the Galaxy!</h1>
+  </header>
+
+  <div class="instructions">
+    <p>Choose a mission to begin. Each mission will test your math skills. Answer correctly to collect fuel and save the galaxy!</p>
+  </div>
+
+  <div class="categories">
+    <button class="button" onclick="startGame('fractions')">Fractions</button>
+    <button class="button" onclick="startGame('ratios')">Ratios & Proportions</button>
+    <button class="button" onclick="startGame('expressions')">Expressions & Equations</button>
+    <button class="button" onclick="startGame('geometry')">Geometry</button>
+    <button class="button" onclick="startGame('integers')">Number Systems</button>
+  </div>
+
+  <div class="question-box" id="questionBox">
+    <h2 id="question"></h2>
+    <input type="text" id="answerInput" placeholder="Type your answer here..." />
+    <br />
+    <button class="button" onclick="submitAnswer()">Submit</button>
+    <div class="score" id="score"></div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <audio id="correctSound" src="https://www.soundjay.com/button/sounds/button-4.mp3"></audio>
+  <audio id="wrongSound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+
+  <script>
+    const questions = {
+      fractions: [
+        { question: "What is 1/2 + 2/3?", answer: "7/6" },
+        { question: "What is 3/4 - 1/2?", answer: "1/4" },
+        { question: "What is 2/5 × 3/4?", answer: "6/20" }
+      ],
+      ratios: [
+        { question: "What is the ratio of 3 apples to 5 oranges?", answer: "3:5" },
+        { question: "Simplify the ratio 10:15", answer: "2:3" },
+        { question: "If 4 pencils cost $8, what is the cost per pencil?", answer: "$2" }
+      ],
+      expressions: [
+        { question: "Simplify: 2(x + 3)", answer: "2x + 6" },
+        { question: "Evaluate: 3^2", answer: "9" },
+        { question: "Solve: x + 4 = 9", answer: "5" }
+      ],
+      geometry: [
+        { question: "Area of a rectangle (length 4, width 3)?", answer: "12" },
+        { question: "Perimeter of square with side 5?", answer: "20" },
+        { question: "Volume of cube with side 2?", answer: "8" }
+      ],
+      integers: [
+        { question: "What is -3 + 7?", answer: "4" },
+        { question: "What is -5 - 2?", answer: "-7" },
+        { question: "Multiply: -2 × -4", answer: "8" }
+      ]
+    };
+
+    let currentCategory = '';
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function startGame(category) {
+      currentCategory = category;
+      currentQuestionIndex = 0;
+      score = 0;
+      document.getElementById('questionBox').style.display = 'block';
+      document.getElementById('result').innerHTML = '';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentCategory][currentQuestionIndex];
+      document.getElementById('question').innerText = q.question;
+      document.getElementById('answerInput').value = '';
+      updateScore();
+    }
+
+    function submitAnswer() {
+      const userAnswer = document.getElementById('answerInput').value.trim();
+      const correctAnswer = questions[currentCategory][currentQuestionIndex].answer;
+      const resultBox = document.getElementById('result');
+      const correctSound = document.getElementById('correctSound');
+      const wrongSound = document.getElementById('wrongSound');
+
+      if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        resultBox.innerHTML = '<p class="correct">✅ Correct! You fueled the ship!</p>';
+        correctSound.play();
+        score++;
+        currentQuestionIndex++;
+      } else {
+        resultBox.innerHTML = '<p class="incorrect">❌ Not quite. Try again!</p>';
+        wrongSound.play();
+        return;
+      }
+
+      if (currentQuestionIndex < questions[currentCategory].length) {
+        setTimeout(showQuestion, 1000);
+      } else {
+        setTimeout(() => {
+          resultBox.innerHTML = `<p>🎉 Mission Complete! Final Score: ${score}/${questions[currentCategory].length}</p>`;
+          document.getElementById('questionBox').style.display = 'none';
+        }, 1500);
+      }
+    }
+
+    function updateScore() {
+      document.getElementById('score').innerText = `Score: ${score}`;
+    }
+  </script>
+</body>
+</html>
